@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-application-configmap
+  namespace: {{ .Values.namespace }}
+data:
+  application.yaml: |-
+    server:
+      port: {{ .Values.service.port }}
+
+    app:
+      mq:
+        news-topic: torino-news-msg
+
+    spring:
+      application:
+        name: {{ .Values.application.name }}
+
+      cloud:
+        consul:
+          host: {{ .Values.central.host }}
+          port: {{ .Values.central.port }}
+          discovery:
+            healthCheckPath: /actuator/health
+            healthCheckInterval: 10s
+            instanceId: ${HOSTNAME}:${server.port}
+            preferIpAddress: true
+      kafka:
+        listener:
+          concurrency: {{ .Values.kafka.consumer.concurrency }}
+        bootstrap-servers: {{ .Values.kafka.bootstrapServers}}
+        consumer:
+          group-id: torino-news-consumer
+          auto-offset-reset: earliest
+
+      datasource:
+        url: jdbc:mysql://{{ .Values.db.host }}:{{ .Values.db.port }}/torino_news?rewriteBatchedStatements=true
+        password: {{ .Values.db.password }}
+        username: {{ .Values.db.username }}
+        druid:
+          initial-size: 10
+          max-active: 30
+          min-idle: 10
+          max-wait:  3000
+          stat-view-servlet:
+            url-pattern: "/druid/*"
+            reset-enable: false
+            login-username: admin
+            login-password: admin
+
+      redis:
+        host: {{ .Values.redis.host }}
+        port: {{ .Values.redis.port }}
+        password: {{ .Values.redis.password }}
+        database: {{ .Values.redis.db }}
+
+    mybatis:
+      mapper-locations: classpath:mapper/*.xml
+
+    management:
+      endpoint:
+        shutdown:
+          enabled: true
+        info:
+          enabled: true
+        health:
+          enabled: true

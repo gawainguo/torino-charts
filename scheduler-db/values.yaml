@@ -1,0 +1,37 @@
+global:
+  storageClass: hf-nfs
+
+image:
+  tag: 8.0.20
+
+root:
+  password: welcome
+
+service:
+  type: NodePort
+  port: 3306
+  nodePort:
+    master: 30336
+    slave: 30337
+
+master:
+  resources:
+    requests:
+      cpu: 1
+      memory: 2Gi
+    limits:
+      cpu: 1
+      memory: 2Gi
+  persistence:
+    size: 5Gi
+
+slave:
+  resources:
+    requests:
+      cpu: 1
+      memory: 2Gi
+    limits:
+      cpu: 1
+      memory: 2Gi
+  persistence:
+    size: 5Gi

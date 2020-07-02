@@ -1,0 +1,32 @@
+replicaCount: 2
+image:
+  tag: 1.1.2
+
+service:
+  port: 8080
+
+application:
+  name: torino-fetcher
+
+resources:
+  requests:
+    cpu: 1
+    memory: 2Gi
+  limits:
+    cpu: 1
+    memory: 2Gi
+
+namespace: torino
+
+central:
+  host: torino-central-server
+  port: 8500
+
+kafka:
+  bootstrapServers: datastore-kafka-0.datastore-kafka-headless.torino-kafka.svc.cluster.local:9092,datastore-kafka-1.datastore-kafka-headless.torino-kafka.svc.cluster.local:9092,datastore-kafka-2.datastore-kafka-headless.torino-kafka.svc.cluster.local:9092
+
+redis:
+  url: fetcher-cache-redis-master.torino-cache.svc.cluster.local
+  port: 6379
+  password: torino_redis@Torino!
+  db: 1

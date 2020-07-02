@@ -1,0 +1,7 @@
+controller:
+  service:
+    type: NodePort
+    nodePorts:
+      http: 31880
+      https: 31881
+  ingressClass: longhorn-nginx

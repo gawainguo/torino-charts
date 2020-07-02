@@ -1,0 +1,9 @@
+zkHosts: datastore-kafka-zookeeper:2181
+
+ingress:
+  enabled: true
+  hosts:
+   -
+  path: /
+  annotations:
+    kubernetes.io/ingress.class: kafka-manager-nginx

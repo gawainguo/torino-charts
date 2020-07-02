@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-application-configmap
+  namespace: {{ .Values.namespace }}
+data:
+  application.yaml: |-
+    server:
+      port: {{ .Values.service.port }}
+
+    spring:
+      application:
+        name: torino-scheduler
+      datasource:
+        url: jdbc:mysql://{{ .Values.db.url }}:{{ .Values.db.port }}/scheduler?rewriteBatchedStatements=true
+        password: {{ .Values.db.password }}
+        username: {{ .Values.db.username }}
+      
+      quartz:
+        job-store-type: jdbc
+        jdbc:
+          initialize-schema: always
+        properties:
+          org:
+            quartz:
+              jobStore:
+                isClustered: true
+                clusterCheckinInterval: 5000
+                class: org.quartz.impl.jdbcjobstore.JobStoreTX
+              scheduler:
+                instanceId: torino-scheduler
+      cloud:
+        consul:
+          host: {{ .Values.central.host }}
+          port: {{ .Values.central.port }}
+          discovery:
+            healthCheckPath: /actuator/health
+            healthCheckInterval: 10s
+            instanceId: ${HOSTNAME}:${server.port}
+            preferIpAddress: true
+
+    feign:
+      client:
+        config:
+          default:
+            connectTimeout: 10000
+            readTimeout: 10000
+    management:
+      endpoint:
+        shutdown:
+          enabled: true
+        info:
+          enabled: true
+        health:
+          enabled: true

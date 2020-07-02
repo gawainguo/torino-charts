@@ -1,0 +1,30 @@
+global:
+  storageClass: hf-nfs
+image:
+  tag: 6.0.5
+password: torino_redis@Torino!
+master:
+  service:
+    type: NodePort
+    port: 6379
+    nodePort: 30379
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 500m
+    limits:
+      memory: 1Gi
+      cpu: 500m
+slave:
+  service:
+    type: NodePort
+    port: 6379
+    nodePort: 30378
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 300m
+    limits:
+      memory: 1Gi
+      cpu: 300m
+# helm install fetcher-cache stable/redis -f values.yaml -n torino-cache

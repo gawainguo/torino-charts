@@ -1,0 +1,30 @@
+global:
+  storageClass: longhorn
+image:
+  tag: 6.0.5
+password: torino_redis@Torino!
+master:
+  service:
+    type: NodePort
+    port: 6379
+    nodePort: 30380
+  resources:
+    requests:
+      memory: 8Gi
+      cpu: 2
+    limits:
+      memory: 8Gi
+      cpu: 2
+slave:
+  service:
+    type: NodePort
+    port: 6379
+    nodePort: 30381
+  resources:
+    requests:
+      memory: 8Gi
+      cpu: 2
+    limits:
+      memory: 8Gi
+      cpu: 2
+# helm install datastore-cache bitnami/redis -f values.yaml -n torino-cache

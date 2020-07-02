@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: torino-fetcher-ingress
+  annotations:
+    kubernetes.io/ingress.class: torino-webapp-ingress
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+    - http:
+        paths:
+          - backend:
+              serviceName: torino-fetcher
+              servicePort: 8080
+            path: /fetcher(/|$)(.*)

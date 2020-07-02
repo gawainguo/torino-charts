@@ -1,0 +1,11 @@
+global:
+  name: torino-central
+
+server:
+  storageClass: hf-nfs
+
+dns:
+  enabled: false
+ui:
+  service:
+    type: NodePort

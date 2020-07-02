@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-application-configmap
+  namespace: {{ .Values.namespace }}
+data:
+  application.yaml: |-
+    server:
+      port: {{ .Values.service.port }}
+
+    spring:
+      application:
+        name: {{ .Values.application.name }}
+
+      cloud:
+        consul:
+          host: {{ .Values.central.host }}
+          port: {{ .Values.central.port }}
+          discovery:
+            healthCheckPath: /actuator/health
+            healthCheckInterval: 10s
+            instanceId: ${HOSTNAME}:${server.port}
+            preferIpAddress: true
+      kafka:
+        producer:
+          bootstrap-servers: {{ .Values.kafka.bootstrapServers}}
+      redis:
+        host: {{ .Values.redis.url }}
+        port: {{ .Values.redis.port }}
+        password: {{ .Values.redis.password }}
+        database: {{ .Values.redis.db }} # Fetcher db
+
+    app:
+      mq:
+        news-topic: torino-news-msg
+        test-topic: test-msg
+
+    management:
+      endpoint:
+        shutdown:
+          enabled: true
+        info:
+          enabled: true
+        health:
+          enabled: true
+
+  log4j2.yaml: |-
+    Configutation:
+      status: warn
+
+      Appenders:
+        Console:
+          name: Console
+          target: SYSTEM_OUT
+          PatternLayout:
+            pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{${LOG_LEVEL_PATTERN:-%5p}}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=green, TRACE=green} %style{${sys:PID}}{magenta} --- [%15.15t] %style{%-40.40c{1.}}{cyan} : %m%n%ex"
+        RollingFile:
+          name: RollingFile
+          fileName: "logs/torino-fetcher-log.log"
+          filePattern: "logs/$${date:yyyy-MM}/torino-fetch-%d{yyyy-MM-dd}-%i.log.gz"
+          PatternLayout:
+            pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{${LOG_LEVEL_PATTERN:-%5p}}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=green, TRACE=green} %style{${sys:PID}}{magenta} --- [%15.15t] %style{%-40.40c{1.}}{cyan} : %m%n%ex"
+          Policies:
+              TimeBasedTriggeringPolicy:
+                modulate: true
+                interval: 1
+
+      Loggers:
+          Root:
+            level: info
+            AppenderRef:
+              - ref: Console
+              - ref: RollingFile
+          Logger:
+            - name: org.springframework
+              level: info
+              AppenderRef:
+                - ref: Console
+                - ref: RollingFile
+            - name: org.redisson
+              level: info
+              AppenderRef:
+                - ref: Console
+                - ref: RollingFile

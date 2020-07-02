@@ -1,0 +1,41 @@
+global:
+  storageClass: longhorn
+
+image:
+  tag: 8.0.20
+
+root:
+  password: welcome
+
+service:
+  type: NodePort
+  port: 3306
+  nodePort:
+    master: 30436
+    slave: 30437
+
+master:
+  resources:
+    requests:
+      cpu: 4
+      memory: 8Gi
+    limits:
+      cpu: 4
+      memory: 8Gi
+  persistence:
+    size: 20Gi
+
+slave:
+  resources:
+    requests:
+      cpu: 4
+      memory: 8Gi
+    limits:
+      cpu: 4
+      memory: 8Gi
+  persistence:
+    size: 20Gi
+
+replication:
+  password: welcome
+  user: torino

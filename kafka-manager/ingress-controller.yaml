@@ -1,0 +1,7 @@
+controller:
+  service:
+    type: NodePort
+    nodePorts:
+      http: 31870
+      https: 31871
+  ingressClass: kafka-manager-nginx

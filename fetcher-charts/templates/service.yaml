@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: torino-fetcher
+  labels:
+    app.kubernetes.io/instance: torino-fetcher
+    app.kubernetes.io/name: torino-fetcher
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: {{ .Values.service.port }}
+  selector:
+    app.kubernetes.io/instance: torino-fetcher
+    app.kubernetes.io/name: torino-fetcher
+  type: ClusterIP

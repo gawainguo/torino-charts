@@ -1,0 +1,26 @@
+global:
+  storageClass: hf-nfs
+
+image:
+  tag: 2.5.0
+
+replicaCount: 3
+resources:
+  limits:
+    cpu: 2
+    memory: 4Gi
+  requests:
+    cpu: 2
+    memory: 4Gi
+
+service:
+  type: NodePort
+  port: 9092
+  internalPort: 9093
+  nodePort: 30992
+
+persistance:
+  storageClass: hf-nfs
+  size: 5Gi
+
+# helm install datastore-kafka bitnami/kafka -f values.yaml -n torino-kafka
